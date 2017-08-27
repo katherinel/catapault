@@ -74,11 +74,26 @@ RSpec.describe Api::V1::TagsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    before(:each) do
+      @tag = create(:tag)
+    end
     it "destroys the requested tag" do
-      tag = Tag.create! valid_attributes
       expect {
-        delete :destroy, params: {id: tag.to_param}, session: valid_session
+        delete :destroy, params: {id: @tag.to_param}, session: valid_session
       }.to change(Tag, :count).by(-1)
+    end
+
+    it "destroys all assignments to breeds" do
+      assignments = @tag.assignments
+      expect {
+        delete :destroy, params: {id: @tag.to_param}, session: valid_session
+      }.to change(assignments, :count).to eq(0)
+    end
+
+    it "does not destroy assigned breeds" do
+      expect {
+        delete :destroy, params: {id: @tag.to_param}, session: valid_session
+      }.to change(Breed, :count).by(0)
     end
   end
 
