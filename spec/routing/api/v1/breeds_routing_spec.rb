@@ -23,5 +23,8 @@ RSpec.describe Api::V1::BreedsController, type: :routing do
       expect(:delete => "/api/v1/breeds/1").to route_to("api/v1/breeds#destroy", :id => "1")
     end
 
+    it "routes to stats#index" do 
+      expect(:get => "/api/v1/breeds/stats").to route_to("api/v1/stats#index", :resource => 'Breed')
+    end
   end
 end

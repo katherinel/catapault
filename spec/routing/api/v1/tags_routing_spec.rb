@@ -23,5 +23,8 @@ RSpec.describe Api::V1::TagsController, type: :routing do
       expect(:delete => "/api/v1/tags/1").to route_to("api/v1/tags#destroy", :id => "1")
     end
 
+    it "routes to stats#index" do 
+      expect(:get => "/api/v1/tags/stats").to route_to("api/v1/stats#index", :resource => 'Tag')
+    end
   end
 end
