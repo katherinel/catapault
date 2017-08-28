@@ -19,14 +19,14 @@ require 'faker'
 # Message expectations are only used when there is no simpler way to specify
 # that an instance is receiving a specific message.
 
-RSpec.describe Api::V1::TagsController, type: :controller do
+RSpec.describe Api::V1::BreedsController, type: :controller do
 
   let(:valid_attributes) {
     {
       data: {
-        type: "tags",
+        type: "breeds",
         attributes: {
-          label: Faker::Lovecraft.words(1)
+          name: Faker::Cat.breed
         }
       }
     } 
@@ -35,9 +35,9 @@ RSpec.describe Api::V1::TagsController, type: :controller do
   let(:invalid_attributes) {
     {
       data: {
-        type: "tags",
+        type: "breeds",
         attributes: {
-          label: ''
+          name: ''
         }
       }
     } 
@@ -45,22 +45,22 @@ RSpec.describe Api::V1::TagsController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # Api::V1::TagsController. Be sure to keep this updated too.
+  # Api::V1::BreedsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET #index" do
-    it "assigns all tags as @tags" do
-      tag = Tag.create! valid_attributes[:data][:attributes]
+    it "assigns all breeds as @breeds" do
+      breed = Breed.create! valid_attributes[:data][:attributes]
       get :index, params: {}, session: valid_session
-      expect(assigns(:tags)).to eq([tag])
+      expect(assigns(:breeds)).to eq([breed])
     end
   end
 
   describe "GET #show" do
-    it "assigns the requested tag as @tag" do
-      tag = Tag.create! valid_attributes[:data][:attributes]
-      get :show, params: valid_attributes.merge(id: tag.id), session: valid_session
-      expect(assigns(:tag)).to eq(tag)
+    it "assigns the requested breed as @breed" do
+      breed = Breed.create! valid_attributes[:data][:attributes]
+      get :show, params: valid_attributes.merge(id: breed.id), session: valid_session
+      expect(assigns(:breed)).to eq(breed)
     end
   end
 
@@ -69,23 +69,23 @@ RSpec.describe Api::V1::TagsController, type: :controller do
       let(:new_attributes) {
         {
           data: {
-            type: "tags",
-            attributes: { label: Faker::Lovecraft.words(1) }
+            type: "breeds",
+            attributes: { name: Faker::Cat.breed }
           }
         }
       }
 
-      it "assigns the requested tag as @tag" do
-        tag = Tag.create! valid_attributes[:data][:attributes]
-        put :update, params: new_attributes.merge(id: tag.id), session: valid_session
-        expect(assigns(:tag)).to eq(tag)
+      it "assigns the requested breed as @breed" do
+        breed = Breed.create! valid_attributes[:data][:attributes]
+        put :update, params: new_attributes.merge(id: breed.id), session: valid_session
+        expect(assigns(:breed)).to eq(breed)
       end
     end
 
     context "with invalid params" do
       it "returns a 422" do
-        tag = Tag.create! valid_attributes[:data][:attributes]
-        put :update, params: invalid_attributes.merge(id: tag.id)
+        breed = Breed.create! valid_attributes[:data][:attributes]
+        put :update, params: invalid_attributes.merge(id: breed.id)
         expect(response.status).to eq(422)
       end
 
@@ -94,25 +94,25 @@ RSpec.describe Api::V1::TagsController, type: :controller do
 
   describe "DELETE #destroy" do
     before(:each) do
-      @tag = create(:tag, :include_breeds)
+      @breed = create(:breed, :include_tags)
     end
-    it "destroys the requested tag" do
+    it "destroys the requested breed" do
       expect {
-        delete :destroy, params: {id: @tag.to_param}, session: valid_session
-      }.to change(Tag, :count).by(-1)
+        delete :destroy, params: {id: @breed.to_param}, session: valid_session
+      }.to change(Breed, :count).by(-1)
     end
 
-    it "destroys all assignments to breeds" do
-      assignments = @tag.assignments
+    it "destroys all assignments to tags" do
+      assignments = @breed.assignments
       expect {
-        delete :destroy, params: {id: @tag.to_param}, session: valid_session
+        delete :destroy, params: {id: @breed.to_param}, session: valid_session
       }.to change(assignments, :count).to eq(0)
     end
 
-    it "does not destroy assigned breeds" do
+    it "does not destroy assigned tags" do
       expect {
-        delete :destroy, params: {id: @tag.to_param}, session: valid_session
-      }.to change(Breed, :count).by(0)
+        delete :destroy, params: {id: @breed.to_param}, session: valid_session
+      }.to change(Tag, :count).by(0)
     end
   end
 
