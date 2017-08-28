@@ -1,7 +1,6 @@
 class BreedSerializer < ActiveModel::Serializer
   attributes :id, :name
   has_many :tags
-  # has_many :tags, if: :show_relationships?
-  attribute :relationships, if: :include_stats?
+  attribute :stats, if: :include_stats?
 
 end

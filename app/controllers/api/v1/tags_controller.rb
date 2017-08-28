@@ -35,10 +35,7 @@ class Api::V1::TagsController < Api::V1::ApiController
       render_error(tag, 404) and return
     end
   end
-
-  # def tag_params
-  #   params.require(:tag).permit(:label)
-  # end
+  
   def tag_params
     ActiveModelSerializers::Deserialization.jsonapi_parse(params)
   end
