@@ -14,7 +14,18 @@ Accept: application/vnd.api+json
 ```
 For making POSTs & PATCHes, set the body type to raw -> JSON (application/json)
 
+## The basics
+
+My API has three models: Breed, Tag, and Assignment.
+
+Breed and Tag are straightforward. Assignment is a double polymorphic that acts as the passthrough between the other two. I did this to make it as useful as possible for potential future use of assigning one record to another.
+
+I wrote this API to follow the JSON API specification, being the standard. As such, all requests expect that format.
+
+
 ## Making requests
+
+#### Breeds
 
 `GET /breeds`
 http://localhost:3000/api/v1/breeds
@@ -56,16 +67,34 @@ http://localhost:3000/api/v1/breeds/:id
 }
 ```
 
+#### Tags
+Similar to breeds. Tags are created with a label attribute instead of a name, though:
 
-## The basics
+`POST /tags`
+http://localhost:3000/api/v1/tags
 
-My API has three models: Breed, Tag, and Assignment.
+Example body in JSON API format:
+```
+{
+  "data": {
+    "type": "tags",
+    "attributes": {
+      "label": “Sheds a lot”
+    }
+  }
+}
+```
 
-Breed and Tag are straightforward. Assignment is a double polymorphic that acts as the passthrough between the other two. I did this to make it as useful as possible for potential future use of assigning one record to another.
+#### Stats
 
-I wrote this API to follow the JSON API specification, being the standard. As such, all requests expect that format.
+`GET /tags/stats`
+http://localhost:3000/api/v1/tags/stats
 
-## Stats
+`GET /breeds/stats`
+http://localhost:3000/api/v1/breeds/stats
+
+
+## All about the stats controller
 
 One of the requirements of this project was to create index routes for /breeds/stats and /tags/stats. For this I made a special stats controller that has the intention of being used to render the resources of any model.
 
@@ -89,4 +118,6 @@ To run all tests and verify that all of them passed:
 
 ## What I would improve
 
-*Testing:* I would like to take the time to get more into the unit tests. Particularly the active_model_serializer custom methods could use coverage. I did learn how to write a serializer unit test for this project, which is cool.
+**Simultaneously creating breed + tags:** I debated whether or not to include the ability to POST a breed while simultaneously allowing you to find existing or create new tags from passed-in label strings in the attributes. There have been (long discussions)[https://github.com/json-api/json-api/issues/795] about this and I ultimately decided that instead of hacking the format and making really weird controllers I would stick to the requirement that tags must exist before they can be assigned to a breed.
+
+**Testing:** I would like to take the time to get more into the unit tests. Particularly the active_model_serializer custom methods could use coverage. I did learn how to write a serializer unit test for this project, which is cool.
