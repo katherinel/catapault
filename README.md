@@ -5,7 +5,7 @@
 ```
 rake db:setup
 rails s
-``
+```
 
 Using your favorite rest client (I use Postman), set it up with the following headers:
 ```
