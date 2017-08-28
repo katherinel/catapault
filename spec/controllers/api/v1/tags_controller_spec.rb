@@ -22,11 +22,25 @@ require 'faker'
 RSpec.describe Api::V1::TagsController, type: :controller do
 
   let(:valid_attributes) {
-    { label: Faker::Lovecraft.words(1) } 
+    {
+      data: {
+        type: "tags",
+        attributes: {
+          label: Faker::Lovecraft.words(1)
+        }
+      }
+    } 
   }
 
   let(:invalid_attributes) {
-    { label: '' }
+    {
+      data: {
+        type: "tags",
+        attributes: {
+          label: ''
+        }
+      }
+    } 
   }
 
   # This should return the minimal set of values that should be in the session
@@ -36,7 +50,7 @@ RSpec.describe Api::V1::TagsController, type: :controller do
 
   describe "GET #index" do
     it "assigns all tags as @tags" do
-      tag = Tag.create! valid_attributes
+      tag = Tag.create! valid_attributes[:data][:attributes]
       get :index, params: {}, session: valid_session
       expect(assigns(:tags)).to eq([tag])
     end
@@ -44,8 +58,8 @@ RSpec.describe Api::V1::TagsController, type: :controller do
 
   describe "GET #show" do
     it "assigns the requested tag as @tag" do
-      tag = Tag.create! valid_attributes
-      get :show, params: {id: tag.to_param}, session: valid_session
+      tag = Tag.create! valid_attributes[:data][:attributes]
+      get :show, params: valid_attributes.merge(id: tag.id), session: valid_session
       expect(assigns(:tag)).to eq(tag)
     end
   end
@@ -53,21 +67,26 @@ RSpec.describe Api::V1::TagsController, type: :controller do
   describe "PATCH #update" do
     context "with valid params" do
       let(:new_attributes) {
-        { label: Faker::Lovecraft.words(1) }
+        {
+          data: {
+            type: "tags",
+            attributes: { label: Faker::Lovecraft.words(1) }
+          }
+        }
       }
 
       it "assigns the requested tag as @tag" do
-        tag = Tag.create! valid_attributes
-        put :update, params: {id: tag.to_param, tag: valid_attributes}, session: valid_session
+        tag = Tag.create! valid_attributes[:data][:attributes]
+        put :update, params: new_attributes.merge(id: tag.id), session: valid_session
         expect(assigns(:tag)).to eq(tag)
       end
     end
 
     context "with invalid params" do
-      it "assigns the tag as @tag" do
-        tag = Tag.create! valid_attributes
-        put :update, params: {id: tag.to_param, tag: invalid_attributes}, session: valid_session
-        expect(assigns(:tag)).to eq(tag)
+      it "returns a 422" do
+        tag = Tag.create! valid_attributes[:data][:attributes]
+        put :update, params: invalid_attributes.merge(id: tag.id)
+        expect(response.status).to eq(422)
       end
 
     end

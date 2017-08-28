@@ -3,17 +3,17 @@ class Api::V1::TagsController < Api::V1::ApiController
 
   def index
     @tags = Tag.all
-    render json: @tags
+    render json: @tags, include: params[:include]
   end
 
 
   def show
-    render json: @tag
+    render json: @tag, include: params[:include]
   end
 
   def update
     if @tag.update_attributes(tag_params) 
-      render json: @tag, status: :ok
+      render json: @tag, status: :ok, include: params[:include]
     else
       render_error(@tag, :unprocessable_entity)
     end
@@ -21,6 +21,7 @@ class Api::V1::TagsController < Api::V1::ApiController
 
   def destroy
     @tag.destroy
+    head 204
   end
 
   private
@@ -35,7 +36,10 @@ class Api::V1::TagsController < Api::V1::ApiController
     end
   end
 
+  # def tag_params
+  #   params.require(:tag).permit(:label)
+  # end
   def tag_params
-    params.require(:tag).permit(:label)
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params)
   end
 end

@@ -1,3 +1,5 @@
+ActiveModel::Serializer.config.adapter = :json_api
+
 class ActiveModel::Serializer
   def show_relationships?
     @instance_options[:show_relationships]
